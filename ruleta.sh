@@ -25,6 +25,32 @@ function helpPanel() {
   exit 1
 }
 
+function martingala() {
+  echo -e "\n${yellowColour}[+] Dinero actual: \$$money${endColour}"
+  echo -ne "${yellowColour}[+] ${endColour}${grayColour}¿Cuánto dinero tienes pensado apostar? -> ${endColour}" && read initial_bet
+  echo -ne "${yellowColour}[+] ${endColour}${grayColour}¿A qué deseas apostar continuamente? ${endColour}${turquoiseColour}(par/impar)${endColour} ${grayColour}-> ${endColour}" && read par_impar
+
+  echo -e "[+] Vamos a jugar con la cantidad inical de \$$initial_bet a $par_impar"
+
+  tput civis
+  while true; do
+    random_number="$(($RANDOM % 37))"
+    echo -e "ha salido el numero $random_number"
+
+    if [ "$(($random_number % 2))" -eq 0 ]; then
+      if [ $random_number -eq 0 ]; then
+        echo "ha salido 0, por lo tanto perdemos"
+      else
+        echo "el numero que ha salido es par"
+      fi
+    else
+      echo "el numero que ha salido es impar"
+    fi
+    sleep 0.3
+  done
+  tput cnorm
+}
+
 while getopts "m:t:h" arg; do
   case $arg in
     m) money=$OPTARG;;
