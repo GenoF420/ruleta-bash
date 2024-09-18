@@ -34,19 +34,27 @@ function martingala() {
 
   tput civis
   while true; do
+    money=$(($money-$initial_bet))
+    echo -e "${yellowColour}[+] ${endColour}${grayColour}Acabas de apostar${endColour} ${yellowColour}\$$initial_bet${endColour}${grayColour} y tienes ${endColour}${yellowColour}$money${endColour}"
     random_number="$(($RANDOM % 37))"
     echo -e "ha salido el numero $random_number"
-
-    if [ "$(($random_number % 2))" -eq 0 ]; then
-      if [ $random_number -eq 0 ]; then
-        echo "ha salido 0, por lo tanto perdemos"
+    sleep 2
+    if [ "$par_impar" == "par" ]; then
+      if [ "$(($random_number % 2))" -eq 0 ]; then
+        if [ $random_number -eq 0 ]; then
+          echo "ha salido 0, por lo tanto perdemos"
+        else
+          echo "el numero que ha salido es par, ¡ganaste :D !"
+          reward=$(($initial_bet*2))
+          echo -e "[+] Ganas un total de $reward"
+          money=$(($money+$reward))
+          echo -e "Tienes $money"
+        fi
       else
-        echo "el numero que ha salido es par"
+        echo "el numero que ha salido es impar"
       fi
-    else
-      echo "el numero que ha salido es impar"
+      sleep 0.3
     fi
-    sleep 0.3
   done
   tput cnorm
 }
