@@ -34,7 +34,7 @@ function martingala() {
 
   #variables globales
   backup_bet=$initial_bet
-  play_counter=1
+  play_counter=0
   jugadas_malas="[ "
   count_jugadas_malas=0
   max_money=0
@@ -44,9 +44,10 @@ function martingala() {
     money=$(($money-$initial_bet))
 #    echo -e "\n${yellowColour}[+] ${endColour}${grayColour}Acabas de apostar${endColour} ${yellowColour}\$$initial_bet${endColour}${grayColour} y tienes ${endColour}${yellowColour}\$$money${endColour}"
     
-    if [ ! $money -le 0 ]; then
+    if [ ! $money -lt 0 ]; then
       random_number="$(($RANDOM % 37))"
-#      echo -e "${yellowColour}[+]${endColour} ${grayColour}[+] Ha salido el numero $random_number${endColour}"
+      echo -e "${yellowColour}[+]${endColour} ${grayColour}[+] Ha salido el numero $random_number${endColour}"
+#     # cuando apostamos por numero pares
       if [ "$par_impar" == "par" ]; then
         if [ "$(($random_number % 2))" -eq 0 ]; then
           if [ $random_number -eq 0 ]; then
@@ -68,6 +69,25 @@ function martingala() {
           fi
         else
 #          echo -e "${yellowColour}[!]${endColour} ${redColour}El numero que ha salido es impar, pierdes!${endColour}"
+          initial_bet=$(($initial_bet*2))
+          jugadas_malas+="$random_number "
+          let count_jugadas_malas+=1
+#          echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora que quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
+        fi
+      else
+        #cuando apostamos por numero impares
+        if [ "$(($random_number % 2))" -eq 1 ]; then
+#          echo -e "${yellowColour}[+]${endColour} ${greenColour}El numero que ha salido es impar, ¡ganaste :D !${endColour}"
+          reward=$(($initial_bet*2))
+#          echo -e "${yellowColour}[+]${endColour} ${grayColour}Ganas un total de:${endColour} ${yellowColour}\$$reward${endColour}"
+          money=$(($money+$reward))
+          initial_bet=$backup_bet
+          jugadas_malas="[ "
+          let count_jugadas_malas=0
+          max_money=$money
+#          echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora te quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
+        else
+#          echo -e "${yellowColour}[!]${endColour} ${redColour}El numero que ha salido es par, pierdes!${endColour}"
           initial_bet=$(($initial_bet*2))
           jugadas_malas+="$random_number "
           let count_jugadas_malas+=1
