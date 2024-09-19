@@ -108,6 +108,39 @@ function martingala() {
   tput cnorm
 }
 
+function inverseLabrouchere() {
+  echo -e "\n${yellowColour}[+] Dinero actual: \$$money${endColour}"
+  echo -ne "${yellowColour}[+] ${endColour}${grayColour}¿A qué deseas apostar continuamente? ${endColour}${turquoiseColour}(par/impar)${endColour} ${grayColour}-> ${endColour}" && read par_impar
+
+  declare -a my_sequence=(1 2 3 4)
+  echo -e "\n[+] Comenzamos con la secuencia [${my_sequence[@]}]"
+
+  bet=$((${my_sequence[0]} + ${my_sequence[-1]}))
+
+  unset my_sequence[0]
+  unset my_sequence[-1]
+  my_sequence=(${my_sequence[@]})
+
+  echo -e "\n[+] Invertimos \$$bet y nuestra secuencia se queda en [${my_sequence[@]}]"
+
+  tput civis
+  while true; do
+    random_number=$(($RANDOM % 37))
+    echo -e "\n[+] Ha salido el numero $random_number"
+
+    if [ $par_impar == "par" ]; then
+      if [ "$(($random_number % 2))" -eq 0 ]; then
+        echo -e "[+] El numero es par, ganas"
+      else
+        echo -e "[!] El numero es impar, pierdes"
+      fi
+    fi
+  done
+  tput cnorm
+
+}
+
+
 while getopts "m:t:h" arg; do
   case $arg in
     m) money=$OPTARG;;
@@ -119,6 +152,8 @@ done;
 if [ $money ] && [ $technique ]; then
   if [ "$technique" == "martingala" ]; then
     martingala
+  elif [ "$technique" == "inverseLabrouchere" ] || [ $technique == "il" ]; then
+    inverseLabrouchere
   else
     echo -e "${redColour}[!] La técnica introducida no es correcta${endColour}"
     helpPanel
