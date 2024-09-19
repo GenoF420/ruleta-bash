@@ -31,41 +31,55 @@ function martingala() {
   echo -ne "${yellowColour}[+] ${endColour}${grayColour}¿A qué deseas apostar continuamente? ${endColour}${turquoiseColour}(par/impar)${endColour} ${grayColour}-> ${endColour}" && read par_impar
 
   echo -e "${yellowColour}[+]${endColour} ${grayColour}Vamos a jugar con la cantidad inical de${endColour} ${yellowColour}\$$initial_bet${endColour} ${turquoiseColour}$par_impar${endColour}\n"
+
+  #variables globales
   backup_bet=$initial_bet
   play_counter=1
+  jugadas_malas="[ "
+  count_jugadas_malas=0
+  max_money=0
 
   tput civis
   while true; do
     money=$(($money-$initial_bet))
-    echo -e "\n${yellowColour}[+] ${endColour}${grayColour}Acabas de apostar${endColour} ${yellowColour}\$$initial_bet${endColour}${grayColour} y tienes ${endColour}${yellowColour}\$$money${endColour}"
+#    echo -e "\n${yellowColour}[+] ${endColour}${grayColour}Acabas de apostar${endColour} ${yellowColour}\$$initial_bet${endColour}${grayColour} y tienes ${endColour}${yellowColour}\$$money${endColour}"
     
     if [ ! $money -le 0 ]; then
       random_number="$(($RANDOM % 37))"
-      echo -e "${yellowColour}[+]${endColour} ${grayColour}[+] Ha salido el numero $random_number${endColour}"
+#      echo -e "${yellowColour}[+]${endColour} ${grayColour}[+] Ha salido el numero $random_number${endColour}"
       if [ "$par_impar" == "par" ]; then
         if [ "$(($random_number % 2))" -eq 0 ]; then
           if [ $random_number -eq 0 ]; then
-            echo -e "${redColour}[!] Ha salido 0, por lo tanto pierdes${endColour}"
+#            echo -e "${redColour}[!] Ha salido 0, por lo tanto pierdes${endColour}"
             initial_bet=$(($initial_bet*2))
-            echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora que quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
+            jugadas_malas+="$random_number "
+            let count_jugadas_malas+=1
+#            echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora que quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
           else
-            echo -e "${yellowColour}[+]${endColour} ${greenColour}El numero que ha salido es par, ¡ganaste :D !${endColour}"
+#            echo -e "${yellowColour}[+]${endColour} ${greenColour}El numero que ha salido es par, ¡ganaste :D !${endColour}"
             reward=$(($initial_bet*2))
-            echo -e "${yellowColour}[+]${endColour} ${grayColour}Ganas un total de:${endColour} ${yellowColour}\$$reward${endColour}"
+#           echo -e "${yellowColour}[+]${endColour} ${grayColour}Ganas un total de:${endColour} ${yellowColour}\$$reward${endColour}"
             money=$(($money+$reward))
             initial_bet=$backup_bet
-            echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora te quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
+            jugadas_malas="[ "
+            let count_jugadas_malas=0
+            max_money=$money
+#            echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora te quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
           fi
         else
-          echo -e "${yellowColour}[!]${endColour} ${redColour}El numero que ha salido es impar, pierdes!${endColour}"
+#          echo -e "${yellowColour}[!]${endColour} ${redColour}El numero que ha salido es impar, pierdes!${endColour}"
           initial_bet=$(($initial_bet*2))
-          echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora que quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
+          jugadas_malas+="$random_number "
+          let count_jugadas_malas+=1
+#          echo -e "${purpleColour}[+]${endColour} ${grayColour} Ahora que quedas con: ${endColour}${yellowColour}\$$money${endColour}\n"
         fi
       fi
     else
       #nos quedamos sin money
       echo -e "\n\n${redColour}[!] Te quedaste sin plata mi bro!, pa fuera.${endColour}\n"
       echo -e "${purpleColour}[+]${endColour} ${grayColour} Total de jugadas: ${endColour}${yellowColour}$play_counter${endColour}\n"
+      echo -e "${purpleColour}[+]${endColour} ${grayColour} Máximo de dinero alcanzado: \$${endColour}${yellowColour}$max_money${endColour}\n"
+      echo -e "${purpleColour}[+]${endColour} ${grayColour} Han salido ${endColour}${purpleColour}$count_jugadas_malas${endColour}${grayColour} jugadas consecutivas malas: ${endColour}${purpleColour}$jugadas_malas]${endColour}\n"
       tput cnorm && exit 0
     fi
 
