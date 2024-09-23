@@ -117,22 +117,35 @@ function inverseLabrouchere() {
 
   bet=$((${my_sequence[0]} + ${my_sequence[-1]}))
 
-  unset my_sequence[0]
-  unset my_sequence[-1]
-  my_sequence=(${my_sequence[@]})
-
-  echo -e "\n[+] Invertimos \$$bet y nuestra secuencia se queda en [${my_sequence[@]}]"
-
   tput civis
   while true; do
+    sleep 1
     random_number=$(($RANDOM % 37))
-    echo -e "\n[+] Ha salido el numero $random_number"
+    let money-=$bet
+    echo -e "[+] Invertimos \$$bet y tenemos \$$money"
 
+    echo -e "\n[+] Ha salido el numero $random_number"
     if [ $par_impar == "par" ]; then
-      if [ "$(($random_number % 2))" -eq 0 ]; then
+      if [ "$(($random_number % 2))" -eq 0 ] && [ "$random_number" -ne 0 ]; then
         echo -e "[+] El numero es par, ganas"
+        reward=$(($bet*2))
+        let money+=$reward
+
+        my_sequence+=($bet)
+        my_sequence=(${my_sequence[@]})
+
+        if [ "${#my_sequence[@]}" -ne 1 ]; then
+          bet=$((${my_sequence[0]} + ${my_sequence[-1]}))
+        elif [ "${#my_sequence[@]}" -eq 1 ]; then
+          bet=${my_sequence[0]}
+        fi
+        echo -e "[+] Tienes $money Dinero"
+        echo -e "[+] Nuestra secuencia se queda en [${my_sequence[@]}]\n"
+
+      elif [ "$random_number" -eq 0 ]; then
+        echo -e "[!] El número es 0, Pierdes!\n"
       else
-        echo -e "[!] El numero es impar, pierdes"
+        echo -e "[!] El numero es impar, pierdes!\n"
       fi
     fi
   done
