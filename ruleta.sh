@@ -145,7 +145,23 @@ function inverseLabrouchere() {
       elif [ "$random_number" -eq 0 ]; then
         echo -e "[!] El número es 0, Pierdes!\n"
       else
-        echo -e "[!] El numero es impar, pierdes!\n"
+        echo -e "[!] El numero es impar, pierdes!"
+
+        unset my_sequence[0]
+        unset my_sequence[-1] 2>/dev/null
+        my_sequence=(${my_sequence[@]})
+
+        echo -e "[+] La sequiencia queda en: [${my_sequence[@]}]\n"
+
+        if [ "${#my_sequence[@]}" -gt 1 ]; then
+          bet=$((${my_sequence[0]} + ${my_sequence[-1]}))
+        elif [ "${#my_sequence[@]}" -eq 1 ]; then
+          bet=${my_sequence[0]}
+        else
+          echo -e "[!] Hemos perdido la secuencia"
+          my_sequence=(1 2 3 4 5)
+          echo -e "[+] Reestablecemos la secuencia a: $my_sequence"
+        fi
       fi
     fi
   done
